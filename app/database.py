@@ -2,12 +2,11 @@ import sqlite3
 
 from settings import DEFAULT_BASE_URL, DEFAULT_LANGUAGE
 
-
 connect = sqlite3.connect('../db_settings.sqlite3')
 cursor = connect.cursor()
 
 
-def create_table():
+def create_table() -> None:
     """Создает таблицу в БД."""
 
     cursor.execute("""
@@ -20,45 +19,48 @@ def create_table():
     connect.commit()
 
 
-def get_data():
+def get_data() -> tuple[str]:
     """Возвращает данные из БД."""
 
     cursor.execute("SELECT * FROM settings")
     return cursor.fetchone()
 
 
-def get_api_key():
+def get_api_key() -> tuple[str]:
     """Возвращает API ключ из БД."""
 
-    cursor.execute('SELECT api_key FROM settings')
+    cursor.execute('SELECT api_key FROM settings WHERE ROWID=1')
+    # api_key, = cursor.fetchone()
     return cursor.fetchone()
 
 
-def get_url():
+def get_url() -> str:
     """Возвращает url адрес из БД."""
 
     cursor.execute('SELECT base_url FROM settings')
-    return cursor.fetchone()
+    url, = cursor.fetchone()
+    return url
 
 
-def get_language():
+def get_language() -> str:
     """Возвращает язык ответа из БД."""
 
     cursor.execute('SELECT language FROM settings')
-    return cursor.fetchone()
+    language, = cursor.fetchone()
+    return language
 
 
-def create_url_lang(url=DEFAULT_BASE_URL, language=DEFAULT_LANGUAGE):
+def update_url_lang(url: str = DEFAULT_BASE_URL, language: str = DEFAULT_LANGUAGE) -> None:
     """Добаляет url и language в БД."""
 
     cursor.execute(
-        "INSERT INTO settings (base_url, language) VALUES (?, ?)",
+        """UPDATE settings SET base_url=?, language=? WHERE ROWID=1""",
         (url, language)
     )
     connect.commit()
 
 
-def create_api_key(api_key):
+def create_api_key(api_key: str) -> None:
     """Создает API KEY пользователя."""
 
     cursor.execute(
@@ -68,21 +70,31 @@ def create_api_key(api_key):
     connect.commit()
 
 
-def update_base_url(url):
+def update_base_url(url: str) -> None:
     """Обновляет данные url в БД."""
 
     cursor.execute(
-        """UPDATE settings SET base_url=?""",
+        """UPDATE settings SET base_url=? WHERE ROWID=1""",
         (url,)
     )
     connect.commit()
 
 
-def update_language(language):
+def update_language(language: str) -> None:
     """Обновляет данные language в БД."""
 
     cursor.execute(
-        """UPDATE settings SET language=?""",
+        """UPDATE settings SET language=? WHERE ROWID=1""",
         (language,)
+    )
+    connect.commit()
+
+
+def update_api_key(api_key: str) -> None:
+    """Обновляет данные API ключа в БД."""
+
+    cursor.execute(
+        """UPDATE settings SET api_key=? WHERE ROWID=1""",
+        (api_key,)
     )
     connect.commit()
