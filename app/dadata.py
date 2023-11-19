@@ -42,7 +42,7 @@ def get_coordinates(full_address: str) -> tuple[float, float]:
 
         if suggestions:
             data = suggestions[0].get('data', {})
-            coordinates = data.get('geo_lat'), data.get('geo_lon')
+            coordinates = float(data.get('geo_lat')), float(data.get('geo_lon'))
             return coordinates
         else:
             raise CoordinatesNotFound(

@@ -28,14 +28,14 @@
 ### Регистрация на GitHub
 
 Прежде чем начать, зарегистрируйтесь
-на [GitHub](https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F&source=header-home),,
+на [GitHub](https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F&source=header-home),
 если вы этого еще не сделали.
 
 ---
 
 ### Создание SSH ключей
 
-ля создания SSH ключей выполните команду:
+Для создания SSH ключей выполните команду:
 
 ```bash
 ssh-keygen
@@ -156,6 +156,6 @@ cd app/
 python main.py
 ```
 
-### Это все, спасибо за внимание :)
+### На этом все, спасибо за внимание :)
 
 ---
