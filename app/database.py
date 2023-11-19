@@ -40,7 +40,7 @@ def create_table() -> None:
     execute_query(query)
 
 
-def get_data() -> tuple[str]:
+def get_data() -> tuple[str] | None:
     """
     Возвращает запись о настройке пользователя из БД.
     """
@@ -49,7 +49,7 @@ def get_data() -> tuple[str]:
     return execute_return_query(query)
 
 
-def get_api_key() -> tuple[str]:
+def get_api_key() -> tuple[str] | None:
     """Возвращает API ключ из БД."""
 
     query = 'SELECT api_key FROM settings WHERE ROWID=1'
@@ -57,7 +57,7 @@ def get_api_key() -> tuple[str]:
     return execute_return_query(query)
 
 
-def get_language() -> tuple[str]:
+def get_language() -> tuple[str] | None:
     """Возвращает язык ответа из БД."""
 
     query = 'SELECT language FROM settings WHERE ROWID=1'
@@ -65,7 +65,7 @@ def get_language() -> tuple[str]:
     return execute_return_query(query)
 
 
-def get_url() -> tuple[str]:
+def get_url() -> tuple[str] | None:
     """Возвращает URL адрес из БД."""
 
     query = 'SELECT url_address FROM settings WHERE ROWID=1'

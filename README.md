@@ -20,13 +20,15 @@
 ---
 
 ## Алгоритм настройки проекта
+
 ### Все команды, которые будут показаны далее, нужно выполнятьв терминале
 
 ---
 
 ### Регистрация на GitHub
 
-Прежде чем начать, нужно зарегистрироваться на [GitHub](https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F&source=header-home), 
+Прежде чем начать, нужно зарегистрироваться
+на [GitHub](https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F&source=header-home),
 если Вы еще этого не сделали.
 
 ---
@@ -44,11 +46,11 @@
 
 Для добавления ранее сгенерированного ключа нужно:
 
-1. Скопировать содержимое вашего публичного ключа, 
-обычно находящегося в файле `~/.ssh/id_rsa.pub`.
+1. Скопировать содержимое вашего публичного ключа,
+   обычно находящегося в файле `~/.ssh/id_rsa.pub`.
 2. Зайдити в свой профиль на GitHub, выберать:
-`"Settings" (Настройки) -> "SSH and GPG keys" 
-(SSH и GPG ключи) -> "New SSH key" (Новый SSH ключ)`.
+   `"Settings" (Настройки) -> "SSH and GPG keys"
+   (SSH и GPG ключи) -> "New SSH key" (Новый SSH ключ)`.
 3. Вставить скопированный публичный ключ и сохранить его.
 
 ---
@@ -58,7 +60,7 @@
 После всех вышеперечисленных манипуляци, можно клонировать
 проект на локальный компьютер, для этого нужно выполнить команду:
 
-`git clonegit@github.com:DanilVolodchenko/DadataLocator.git`.
+`git clone git@github.com:DanilVolodchenko/DadataLocator.git`.
 
 ---
 
@@ -66,7 +68,11 @@
 
 Переходим в корневую папку проекта: `cd DadataLocator`
 
-Устанавливаем виртуальное окружение: `python3.10 -m venv env`
+Устанавливаем виртуальное окружение: `python3.10 -m venv env`.
+
+Если произошла ошибка `python3.10: command not found`, то
+пропишите такую команду: `python -m venv env` или   
+`py -3.10 -m venv env`
 
 Активируем его: `source env/Scripts/activate`
 
@@ -80,6 +86,10 @@
 `pip install -r requirements.txt`
 
 ---
+
+### Обновление пакета pip
+
+Обновляем пакетный менеджер pip: `python -m pip install --upgrade pip`
 
 ### Запуск
 

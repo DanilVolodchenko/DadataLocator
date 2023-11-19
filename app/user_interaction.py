@@ -77,7 +77,8 @@ def create_api_key(db_api_key: str | None) -> None:
             else:
                 print('Ключ успешно создан\n')
                 break
-        break
+        else:
+            break
 
 
 def show_coordinate(results: list[str]) -> None:
