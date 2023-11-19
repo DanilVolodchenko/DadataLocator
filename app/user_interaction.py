@@ -10,9 +10,9 @@ def main_actions() -> None:
     while True:
         print('\n** Главное меню **\n'
               '1. Ввести нужный адрес\n'
-              '2. Изменить URL адрес\n'
-              '3. Изменить язык ответа\n'
-              '4. Изменить API ключ\n'
+              '2. Выбрать язык ответа\n'
+              '3. Изменить URL адрес\n'
+              '4. Изменить API-ключ\n'
               '0. Выход\n')
 
         choice = input('Выберите действие: ').strip()
@@ -21,10 +21,10 @@ def main_actions() -> None:
             show_address()
 
         elif choice == '2':
-            update_url_address()
+            update_language()
 
         elif choice == '3':
-            update_language()
+            update_url_address()
 
         elif choice == '4':
             update_api_key()
@@ -33,7 +33,7 @@ def main_actions() -> None:
             break
 
         else:
-            print('К сожалению, выбранного Вами действия нет, '
+            print('К сожалению, выбранного вами действия нет, '
                   'пожалуйста, попробуйте еще раз\n')
 
 
@@ -57,25 +57,25 @@ def show_address() -> None:
             show_coordinate(addresses)
 
         else:
-            print('Ничего не найдено\n')
+            print('Ничего не найдено, пожалуйста, попробуйте еще раз')
 
 
 def create_api_key(db_api_key: str | None) -> None:
-    """Добавляет API ключ в БД если такового нет."""
+    """Добавляет API-ключ в БД если такового нет."""
 
     while True:
         if db_api_key is None:
-            api_key = input('\nПожалуйста, введите API ключ '
+            api_key = input('\nПожалуйста, введите API-ключ '
                             'для сервиса dadata: ')
             name = 'api_key'
 
             try:
                 create_param_db(name, api_key)
             except (ValueError, TypeError):
-                print('Введен неверный API ключ, '
-                      'пожалуйста, попробуйте еще раз\n')
+                print('Введен неверный API-ключ, '
+                      'пожалуйста, попробуйте еще раз')
             else:
-                print('Ключ успешно создан\n')
+                print('* Ключ успешно создан *')
                 break
         else:
             break
@@ -86,16 +86,20 @@ def show_coordinate(results: list[str]) -> None:
 
     try:
         number = int(input('\nВведите номер нужного адреса'
-                           ' от 1 до 10: ').strip())
+                           f' от 1 до {len(results)}: ').strip())
+
+        if number < 1 or number > len(results):
+            raise IndexError
 
         full_address = results[number - 1]
         latitude, longitude = dadata.get_coordinates(full_address)
 
     except IndexError:
-        print('Введите номер в диапазоне от 1 до 10\n')
+        print('\nНужно ввести цифру диапазоне '
+              f' от 1 до {len(results)}: ')
 
     except ValueError:
-        print('Нужно ввести только цифру\n')
+        print('Ввести нужно только цифру\n')
 
     except (CoordinatesNotFound, CoordinatesError) as ex:
         print(ex)
@@ -107,22 +111,22 @@ def show_coordinate(results: list[str]) -> None:
                   f'Долгота: {longitude}')
         else:
             print('Извините, нет информации о координатах '
-                  'выбранного Вами адреса\n')
+                  'выбранного вами адреса\n')
 
 
 def update_api_key() -> None:
-    """Обновляет данные API ключа в БД."""
+    """Обновляет данные API-ключа в БД."""
 
-    new_api_key = input('\nПожалуйста, введите новый API ключ '
+    new_api_key = input('\nПожалуйста, введите новый API-ключ '
                         'для сервиса dadata: ')
     name = 'api_key'
     try:
         update_param_db(name, new_api_key)
     except (ValueError, TypeError):
-        print('\nВведен неверный API ключ, пожалуйста, '
-              'попробуйте еще раз или выберете другое действие\n')
+        print('\nВведен неверный API-ключ, пожалуйста, '
+              'попробуйте еще раз')
     else:
-        print('* Ключ успешно обновлен *\n')
+        print('* Ключ успешно обновлен *')
 
 
 def update_url_address() -> None:
@@ -134,9 +138,10 @@ def update_url_address() -> None:
     try:
         update_param_db(name, new_url)
     except (ValueError, TypeError):
-        print('\nВвeден некорректный URL адрес\n')
+        print('\nВвeден некорректный URL адрес, пожалуйста, '
+              'попробуйте еще раз')
     else:
-        print('* URL адрес успешно изменен *\n')
+        print('* URL адрес успешно изменен *')
 
 
 def update_language() -> None:
@@ -149,6 +154,6 @@ def update_language() -> None:
         update_param_db(name, new_language)
     except (ValueError, TypeError):
         print('\nК сожалению, мы еще не умеем работать с '
-              'выбранным Вами языком\n')
+              'выбранным вами языком')
     else:
-        print('* Язык ответа успешно изменен *\n')
+        print('* Язык ответа успешно изменен *')

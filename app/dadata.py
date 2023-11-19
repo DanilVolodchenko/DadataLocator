@@ -16,9 +16,10 @@ def get_list_of_addresses(query: str) -> dict[str, str]:
 
     if response.status_code != HTTPStatus.OK:
         url_address, = database.get_url()
-        print(url_address)
+
         raise requests.RequestException(
-            f'Не получается отправить запрос по данному адресу: {url_address}'
+            f'Не получается отправить запрос по данному адресу: {url_address}, '
+            f'проверьте корректность вашего API-ключа или URL адреса'
         )
     return response.json().get('suggestions', [])
 
