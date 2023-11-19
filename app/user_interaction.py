@@ -4,13 +4,16 @@ from validators import is_valid_language, is_valid_url_address, is_valid_api_key
 
 
 def main_actions() -> None:
+    """Основная работа с действиями пользователя."""
+
     while True:
         print('1. Ввести адрес')
         print('2. Обновить URL адрес или язык ответа')
         print('3. Изменить API ключ')
         print('0. Выход\n')
 
-        choice = input('Выберите действие: ')
+        choice = input('Выберите действие: ').strip()
+        print()
 
         if choice == '1':
             show_address()
@@ -31,20 +34,18 @@ def main_actions() -> None:
 def show_address() -> None:
     """Выводит пользователю всевозможные адреса."""
 
-    database.update_url_lang()
-
     query = input('Введите адрес: ')
 
     suggestions = dadata.get_list_of_addresses(query)
-    results = dadata.get_value_of_addresses(suggestions)
-    if results:
-        print('**Выберете номер правильного адреса**')
-        for i, result in enumerate(results, start=1):
+    addresses = dadata.get_value_of_addresses(suggestions)
+
+    if addresses:
+        for i, result in enumerate(addresses, start=1):
             print(f'{i}. {result}')
-        show_coordinate(results)
+        show_coordinate(addresses)
 
     else:
-        print('Ничего не найдено')
+        print('Ничего не найдено\n')
 
 
 def show_coordinate(results: list[str]) -> None:
@@ -58,6 +59,7 @@ def show_coordinate(results: list[str]) -> None:
 
     except IndexError:
         print('Введите номер в диапазоне от 1 до 10\n')
+
     except ValueError:
         print('Нужно ввести только цифру\n')
 
@@ -69,7 +71,7 @@ def show_coordinate(results: list[str]) -> None:
             print('Извините, нет информации о координатах выбранного Вами адреса\n')
 
 
-def create_api_key(db_api_key: str) -> None:
+def create_api_key(db_api_key: str | None) -> None:
     """Добавляет API ключ в БД если такового нет."""
 
     while True:
@@ -77,7 +79,7 @@ def create_api_key(db_api_key: str) -> None:
             api_key = input('Пожалуйста, введите API ключ для сервиса dadata: ')
             if is_valid_api_key(api_key):
                 database.create_api_key(api_key)
-                print('Ключ успешно добален.')
+                print('Ключ успешно добален\n')
                 break
             print('Введен неверный API ключ, пожалуйста, попробуйте еще раз\n')
         else:
@@ -88,31 +90,35 @@ def update_api_key():
     """Обновляет данные API ключа в БД."""
 
     api_key = input('Пожалуйста, введите новый API ключ для сервиса dadata: ')
+
     if is_valid_api_key(api_key):
         database.update_api_key(api_key)
-        print('Ключ успешно обновлен')
-    print('Введен неверный API ключ, пожалуйста, попробуйте еще раз или выберете другое действие')
+        print('Ключ успешно обновлен\n')
+    else:
+        print('Введен неверный API ключ, пожалуйста, попробуйте еще раз или выберете другое действие\n')
 
 
 def update_url_lang():
     while True:
         print('1. Обновить URL адрес')
         print('2. Обновить язык ответа')
-        print('0. Выход\n')
+        print('0. Назад\n')
 
-        choice = input('Выберите действие: ')
+        choice = input('Выберите действие: ').strip()
 
         if choice == '1':
             new_url = input('Введите URL адрес: ')
             if is_valid_url_address(new_url):
                 database.update_base_url(new_url)
+                print('URL адрес успешно изменен\n')
             else:
                 print('Ввeден некорректный URL адрес')
 
         elif choice == '2':
-            new_language = input('Выберите язык ответа (en/ru)')
+            new_language = input('Выберите язык ответа (en/ru) ')
             if is_valid_language(new_language):
                 database.update_language(new_language)
+                print('Язык ответа успешно изменен\n')
             else:
                 print('К сожалению, мы еще не умеем работать с выбранным Вами языком.')
 

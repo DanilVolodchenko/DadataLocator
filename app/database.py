@@ -1,100 +1,101 @@
 import sqlite3
 
-from settings import DEFAULT_BASE_URL, DEFAULT_LANGUAGE
+from settings import DEFAULT_BASE_URL, DEFAULT_LANGUAGE, DEFAULT_DB_FILE
 
-connect = sqlite3.connect('../db_settings.sqlite3')
-cursor = connect.cursor()
+
+def execute_query(query: str, parameters: tuple = ()) -> None:
+    """Выполняет различные запросы."""
+
+    with sqlite3.connect(DEFAULT_DB_FILE) as connect:
+        cursor = connect.cursor()
+        try:
+            cursor.execute(query, parameters)
+        except sqlite3.Error as er:
+            print(f'Произошла ошибка с БД {er}')
+
+        connect.commit()
+
+
+def execute_return_query(query: str) -> str:
+    """Выполняет запрос и возвращает результат."""
+
+    with sqlite3.connect(DEFAULT_DB_FILE) as conn:
+        cursor = conn.cursor()
+        cursor.execute(query)
+
+        return cursor.fetchone()
 
 
 def create_table() -> None:
     """Создает таблицу в БД."""
 
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS settings (
-            api_key TEXT,
-            base_url TEXT,
-            language TEXT
-        )
-    """)
-    connect.commit()
+    query = f"""
+                CREATE TABLE IF NOT EXISTS settings (
+                    api_key TEXT,
+                    base_url TEXT DEFAULT '{DEFAULT_BASE_URL}',
+                    language TEXT DEFAULT '{DEFAULT_LANGUAGE}'
+                )
+            """
+
+    execute_query(query)
 
 
-def get_data() -> tuple[str]:
-    """Возвращает данные из БД."""
-
-    cursor.execute("SELECT * FROM settings")
-    return cursor.fetchone()
-
-
-def get_api_key() -> tuple[str]:
+def get_api_key() -> str:
     """Возвращает API ключ из БД."""
 
-    cursor.execute('SELECT api_key FROM settings WHERE ROWID=1')
-    # api_key, = cursor.fetchone()
-    return cursor.fetchone()
+    query = 'SELECT api_key FROM settings WHERE ROWID=1'
 
-
-def get_url() -> str:
-    """Возвращает url адрес из БД."""
-
-    cursor.execute('SELECT base_url FROM settings')
-    url, = cursor.fetchone()
-    return url
+    return execute_return_query(query)
 
 
 def get_language() -> str:
-    """Возвращает язык ответа из БД."""
+    """Возвращает язык ответа."""
 
-    cursor.execute('SELECT language FROM settings')
-    language, = cursor.fetchone()
-    return language
+    query = 'SELECT language FROM settings WHERE ROWID=1'
+
+    return execute_return_query(query)
 
 
 def update_url_lang(url: str = DEFAULT_BASE_URL, language: str = DEFAULT_LANGUAGE) -> None:
     """Добаляет url и language в БД."""
 
-    cursor.execute(
-        """UPDATE settings SET base_url=?, language=? WHERE ROWID=1""",
-        (url, language)
-    )
-    connect.commit()
+    query = "UPDATE settings SET base_url=?, language=? WHERE ROWID=1"
+    parameters = (url, language)
+
+    execute_query(query, parameters)
 
 
 def create_api_key(api_key: str) -> None:
     """Создает API KEY пользователя."""
 
-    cursor.execute(
-        "INSERT INTO settings (api_key) VALUES (?)",
-        (api_key,)
-    )
-    connect.commit()
+    query = "INSERT INTO settings (api_key) VALUES (?)"
+    parameters = (api_key,)
+
+    execute_query(query, parameters)
 
 
 def update_base_url(url: str) -> None:
     """Обновляет данные url в БД."""
 
-    cursor.execute(
-        """UPDATE settings SET base_url=? WHERE ROWID=1""",
-        (url,)
-    )
-    connect.commit()
+    query = "UPDATE settings SET base_url=? WHERE ROWID=1"
+    parameters = (url,)
+
+    execute_query(query, parameters)
 
 
 def update_language(language: str) -> None:
     """Обновляет данные language в БД."""
 
-    cursor.execute(
-        """UPDATE settings SET language=? WHERE ROWID=1""",
-        (language,)
-    )
-    connect.commit()
+    query = "UPDATE settings SET language=? WHERE ROWID=1"
+    parameters = (language,)
+
+    execute_query(query, parameters)
 
 
 def update_api_key(api_key: str) -> None:
     """Обновляет данные API ключа в БД."""
 
-    cursor.execute(
-        """UPDATE settings SET api_key=? WHERE ROWID=1""",
-        (api_key,)
-    )
-    connect.commit()
+    query = "UPDATE settings SET api_key=? WHERE ROWID=1"
+    parameters = (api_key,)
+
+    execute_query(query, parameters)

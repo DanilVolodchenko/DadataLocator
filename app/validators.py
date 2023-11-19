@@ -20,18 +20,20 @@ def is_valid_api_key(api_key: str) -> bool:
     data = {
         'query': 'Какой-то запрос',
     }
-    response = requests.post(settings.DEFAULT_BASE_URL, headers=headers, json=data)
-    if response.status_code == HTTPStatus.OK:
-        return True
-    return False
+    try:
+        response = requests.post(settings.DEFAULT_BASE_URL, headers=headers, json=data)
+
+    except requests.exceptions.RequestException:
+        return False
+
+    else:
+        return response.status_code == HTTPStatus.OK
 
 
 def is_valid_language(language: str) -> bool:
     """Проверка введенного языка на корректность."""
 
-    if language.lower() in ('ru', 'en'):
-        return True
-    return False
+    return language.lower() in ('ru', 'en')
 
 
 def is_valid_url_address(url_address: str) -> bool:
@@ -43,6 +45,4 @@ def is_valid_url_address(url_address: str) -> bool:
         r'(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)/?'
         r'[^/\s]+(?:/[^/\s]*)*$', re.IGNORECASE)
 
-    if re.match(url_pattern, url_address) is not None:
-        return True
-    return False
+    return bool(re.match(url_pattern, url_address))
