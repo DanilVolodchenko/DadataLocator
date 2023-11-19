@@ -2,31 +2,39 @@ from http import HTTPStatus
 
 import requests
 
-import settings
 import database
+from settings import NUMBER_OF_RESULT, DEFAULT_LANGUAGE, DEFAULT_URL_ADDRESS
+from exceptions import CoordinatesNotFound, CoordinatesError
 
 
 def get_list_of_addresses(query: str) -> dict[str, str]:
     """Возвращает список предполагаемых адресов."""
 
-    response = get_response(query)
+    data = database.get_data()
 
-    if response.status_code == HTTPStatus.OK:
-        return response.json().get('suggestions', [])
-    else:
-        print(f"Ошибка получения адресов: {response.status_code}, {response.text}")
+    response = get_response(query, *data)
+
+    if response.status_code != HTTPStatus.OK:
+        url_address, = database.get_url()
+        print(url_address)
+        raise requests.RequestException(
+            f'Не получается отправить запрос по данному адресу: {url_address}'
+        )
+    return response.json().get('suggestions', [])
 
 
-def get_value_of_addresses(suggestions: dict) -> list[str]:
+def get_value_of_addresses(suggestions: dict | None) -> list[str]:
     """Возвращает значения адресов."""
 
-    return [suggestion.get("unrestricted_value", {}) for suggestion in suggestions]
+    return [sug.get("unrestricted_value") for sug in suggestions]
 
 
 def get_coordinates(full_address: str) -> tuple[float, float]:
     """Возвращает координаты выбранного адреса."""
 
-    response = get_response(full_address, count=1)
+    data = database.get_data()
+
+    response = get_response(full_address, *data, count=1)
 
     if response.status_code == HTTPStatus.OK:
         suggestions = response.json().get('suggestions', [])
@@ -36,16 +44,21 @@ def get_coordinates(full_address: str) -> tuple[float, float]:
             coordinates = data.get('geo_lat'), data.get('geo_lon')
             return coordinates
         else:
-            print(f'Координаты не найдены для адреса: {full_address}')
+            raise CoordinatesNotFound(
+                f'Координаты для адреса: {full_address} не были найдены'
+            )
 
     else:
-        print(f"Ошибка получения координат: {response.status_code}, {response.text}")
+        raise CoordinatesError('Ошибка получения координат')
 
 
-def get_response(query: str, *, count: int = settings.DEFAULT_COUNT):
+def get_response(
+        query: str, api_key: str,
+        url_address: str = DEFAULT_URL_ADDRESS,
+        language: str = DEFAULT_LANGUAGE,
+        *, count: int = NUMBER_OF_RESULT
+) -> requests.Response:
     """Возвращает ответ на запрос к dadata."""
-
-    api_key, = database.get_api_key()
 
     headers = {
         'Content-Type': 'application/json',
@@ -54,9 +67,8 @@ def get_response(query: str, *, count: int = settings.DEFAULT_COUNT):
     }
     data = {
         'query': query,
-        'language': settings.DEFAULT_LANGUAGE,
+        'language': language,
         'count': count
     }
-    response = requests.post(settings.DEFAULT_BASE_URL, headers=headers, json=data)
-
+    response = requests.post(url_address, headers=headers, json=data)
     return response

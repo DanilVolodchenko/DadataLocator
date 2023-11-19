@@ -1,6 +1,6 @@
 import sqlite3
 
-from settings import DEFAULT_BASE_URL, DEFAULT_LANGUAGE, DEFAULT_DB_FILE
+from settings import DEFAULT_URL_ADDRESS, DEFAULT_LANGUAGE, DEFAULT_DB_FILE
 
 
 def execute_query(query: str, parameters: tuple = ()) -> None:
@@ -16,7 +16,7 @@ def execute_query(query: str, parameters: tuple = ()) -> None:
         connect.commit()
 
 
-def execute_return_query(query: str) -> str:
+def execute_return_query(query: str) -> tuple[str]:
     """Выполняет запрос и возвращает результат."""
 
     with sqlite3.connect(DEFAULT_DB_FILE) as conn:
@@ -32,7 +32,7 @@ def create_table() -> None:
     query = f"""
                 CREATE TABLE IF NOT EXISTS settings (
                     api_key TEXT,
-                    base_url TEXT DEFAULT '{DEFAULT_BASE_URL}',
+                    url_address TEXT DEFAULT '{DEFAULT_URL_ADDRESS}',
                     language TEXT DEFAULT '{DEFAULT_LANGUAGE}'
                 )
             """
@@ -40,7 +40,16 @@ def create_table() -> None:
     execute_query(query)
 
 
-def get_api_key() -> str:
+def get_data() -> tuple[str]:
+    """
+    Возвращает запись о настройке пользователя из БД.
+    """
+    query = 'SELECT * FROM settings WHERE ROWID=1'
+
+    return execute_return_query(query)
+
+
+def get_api_key() -> tuple[str]:
     """Возвращает API ключ из БД."""
 
     query = 'SELECT api_key FROM settings WHERE ROWID=1'
@@ -48,21 +57,20 @@ def get_api_key() -> str:
     return execute_return_query(query)
 
 
-def get_language() -> str:
-    """Возвращает язык ответа."""
+def get_language() -> tuple[str]:
+    """Возвращает язык ответа из БД."""
 
     query = 'SELECT language FROM settings WHERE ROWID=1'
 
     return execute_return_query(query)
 
 
-def update_url_lang(url: str = DEFAULT_BASE_URL, language: str = DEFAULT_LANGUAGE) -> None:
-    """Добаляет url и language в БД."""
+def get_url() -> tuple[str]:
+    """Возвращает URL адрес из БД."""
 
-    query = "UPDATE settings SET base_url=?, language=? WHERE ROWID=1"
-    parameters = (url, language)
+    query = 'SELECT url_address FROM settings WHERE ROWID=1'
 
-    execute_query(query, parameters)
+    return execute_return_query(query)
 
 
 def create_api_key(api_key: str) -> None:
@@ -74,10 +82,10 @@ def create_api_key(api_key: str) -> None:
     execute_query(query, parameters)
 
 
-def update_base_url(url: str) -> None:
+def update_url_address(url: str) -> None:
     """Обновляет данные url в БД."""
 
-    query = "UPDATE settings SET base_url=? WHERE ROWID=1"
+    query = "UPDATE settings SET url_address=? WHERE ROWID=1"
     parameters = (url,)
 
     execute_query(query, parameters)

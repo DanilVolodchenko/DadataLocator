@@ -1,33 +1,16 @@
 import re
 from http import HTTPStatus
 
-import requests
-
-import settings
+from dadata import get_response
 
 
 def is_valid_api_key(api_key: str) -> bool:
     """Проверяет API ключ на корректность."""
 
-    if len(api_key) != settings.DEFAULT_API_KEY_LENGTH:
-        return False
+    query = 'Какой-то запрос'
+    response = get_response(query, api_key)
 
-    headers = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': f'Token {api_key}'
-    }
-    data = {
-        'query': 'Какой-то запрос',
-    }
-    try:
-        response = requests.post(settings.DEFAULT_BASE_URL, headers=headers, json=data)
-
-    except requests.exceptions.RequestException:
-        return False
-
-    else:
-        return response.status_code == HTTPStatus.OK
+    return response.status_code == HTTPStatus.OK
 
 
 def is_valid_language(language: str) -> bool:
