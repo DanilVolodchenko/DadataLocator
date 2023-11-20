@@ -15,26 +15,25 @@ def main_actions() -> None:
               '4. Изменить API-ключ\n'
               '0. Выход\n')
 
+        actions = {
+            '1': show_address,
+            '2': update_language,
+            '3': update_url_address,
+            '4': update_api_key,
+        }
+
         choice = input('Выберите действие: ').strip()
 
-        if choice == '1':
-            show_address()
-
-        elif choice == '2':
-            update_language()
-
-        elif choice == '3':
-            update_url_address()
-
-        elif choice == '4':
-            update_api_key()
-
-        elif choice == '0':
+        if choice == '0':
             break
+
+        action = actions.get(choice, None)
+        if action:
+            action()
 
         else:
             print('К сожалению, выбранного вами действия нет, '
-                  'пожалуйста, попробуйте еще раз\n')
+                  'пожалуйста, попробуйте еще раз')
 
 
 def show_address() -> None:
