@@ -18,8 +18,8 @@ def get_list_of_addresses(query: str) -> dict[str, str]:
         url_address, = database.get_url()
 
         raise requests.RequestException(
-            f'Не получается отправить запрос по данному адресу: {url_address}, '
-            f'проверьте корректность вашего API-ключа или URL адреса'
+            f'Не получается отправить запрос по данному адресу: {url_address},'
+            f' проверьте корректность вашего API-ключа или URL адреса'
         )
     return response.json().get('suggestions', [])
 

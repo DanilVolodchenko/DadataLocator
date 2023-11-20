@@ -60,27 +60,6 @@ def show_address() -> None:
             print('Ничего не найдено, пожалуйста, попробуйте еще раз')
 
 
-def create_api_key(db_api_key: str | None) -> None:
-    """Добавляет API-ключ в БД если такового нет."""
-
-    while True:
-        if db_api_key is None:
-            api_key = input('\nПожалуйста, введите API-ключ '
-                            'для сервиса dadata: ')
-            name = 'api_key'
-
-            try:
-                create_param_db(name, api_key)
-            except (ValueError, TypeError):
-                print('Введен неверный API-ключ, '
-                      'пожалуйста, попробуйте еще раз')
-            else:
-                print('* Ключ успешно создан *')
-                break
-        else:
-            break
-
-
 def show_coordinate(results: list[str]) -> None:
     """Выводит пользователю координаты выбранного одреса."""
 
@@ -112,6 +91,27 @@ def show_coordinate(results: list[str]) -> None:
         else:
             print('Извините, нет информации о координатах '
                   'выбранного вами адреса\n')
+
+
+def create_api_key(db_api_key: tuple[str] | None) -> None:
+    """Добавляет API-ключ в БД если такового нет."""
+
+    while True:
+        if db_api_key is None:
+            api_key = input('\nПожалуйста, введите API-ключ '
+                            'для сервиса dadata: ')
+            name = 'api_key'
+
+            try:
+                create_param_db(name, api_key)
+            except (ValueError, TypeError):
+                print('Введен неверный API-ключ, '
+                      'пожалуйста, попробуйте еще раз')
+            else:
+                print('* Ключ успешно создан *')
+                break
+        else:
+            break
 
 
 def update_api_key() -> None:
