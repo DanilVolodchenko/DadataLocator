@@ -86,8 +86,8 @@ def show_coordinate(results: list[str]) -> None:
     else:
         if latitude or longitude:
             print('\n* Результат *\n'
-                  f'Широта: {latitude}\n'
-                  f'Долгота: {longitude}')
+                  f'Широта: {float(latitude)}\n'
+                  f'Долгота: {float(longitude)}')
         else:
             print('Извините, нет информации о координатах '
                   'выбранного вами адреса\n')
